@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block head_extra %}
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+    .credit-detail-header {
+        background-color: #007bff;
+        color: white;
+        padding: 40px 0;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+    .credit-detail-header h1 {
+        font-weight: bold;
+        font-size: 2.5rem;
+    }
+    .credit-info-card, .order-form-card, .seller-info-card {
+        background-color: #ffffff;
+        padding: 25px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        margin-bottom: 25px;
+    }
+    .credit-info-card h3, .order-form-card h3, .seller-info-card h3 {
+        color: #343a40;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #007bff;
+        padding-bottom: 10px;
+    }
+    .price-display {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: #28a745;
+        margin-bottom: 15px;
+    }
+    .form-label {
+        font-weight: bold;
+    }
+    .btn-purchase {
+        font-size: 1.1rem;
+        padding: 10px 25px;
+    }
+    .credit-image-large {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .verification-link a {
+        word-break: break-all;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Credit Detail Header -->
+<header class="credit-detail-header">
+    <div class="container">
+        <h1>{{ credit.title }}</h1>
+        <p class="lead">High-quality certified carbon credits to help you achieve your carbon neutrality goals.</p>
+    </div>
+</header>
+
+<!-- Main Content -->
+<div class="container">
+    <div class="row">
+        <!-- Left Column: Credit Details & Seller Info -->
+        <div class="col-lg-7">
+            <div class="credit-info-card">
+                <h3><i class="bi bi-card-list me-2"></i>Carbon Credit Details</h3>
+                
+                {% if credit.image_filename %}
+                    <img src="{{ url_for("uploaded_file", subfolder="credits", filename=credit.image_filename) }}" class="img-fluid credit-image-large" alt="{{ credit.title }}">
+                {% else %}
+                    <div class="text-center p-5 bg-light rounded mb-3">
+                        <i class="bi bi-images" style="font-size: 5rem; color: #ccc;"></i>
+                        <p class="text-muted">No image provided</p>
+                    </div>
+                {% endif %}
+
+                <p><strong>Project Type:</strong> {{ credit.source_project_type if credit.source_project_type else "N/A" }}</p>
+                <p><strong>Description:</strong> {{ credit.description|safe }}</p>
+                <p><strong>Total Available Quantity:</strong> {{ credit.quantity }} {{ credit.unit }}</p>
+                <p><strong>Price per Unit:</strong> ${{ "%.2f"|format(credit.price_per_unit) }}</p>
+                <p><strong>Project Location:</strong> {{ credit.source_project_location if credit.source_project_location else "N/A" }}</p>
+                <p><strong>Validity Period:</strong> 
+                    {{ credit.validity_start_date.strftime("%Y-%m-%d") if credit.validity_start_date else "N/A" }} 
+                    to 
+                    {{ credit.validity_end_date.strftime("%Y-%m-%d") if credit.validity_end_date else "N/A" }}
+                </p>
+                <p><strong>Verification Standard:</strong> {{ credit.verification_details_filename if credit.verification_details_filename else "Details not provided" }}</p>
+                
+                {% if credit.verification_details_filename %}
+                <p class="verification-link"><strong>Verification Document:</strong> 
+                    <a href="{{ url_for("uploaded_file", subfolder="verifications", filename=credit.verification_details_filename) }}" target="_blank">
+                        {{ credit.verification_details_filename }}
+                    </a>
+                </p>
+                {% endif %}
+                <p><strong>Status:</strong> <span class="badge rounded-pill bg-info">{{ credit.status.value|replace("_", " ")|title }}</span></p>
+            </div>
+
+            <div class="seller-info-card">
+                <h3><i class="bi bi-person-check-fill me-2"></i>Seller Information</h3>
+                <p><strong>Company Name:</strong> {{ credit.seller.company_name if credit.seller.company_name else credit.seller.username }}</p>
+                {# Add more seller details if needed, e.g., rating, transaction history count #}
+                <p><strong>Contact Seller:</strong> <a href="mailto:{{ credit.seller.email }}">{{ credit.seller.email }}</a></p>
+                {# <p><a href="#seller-profile" class="btn btn-outline-secondary btn-sm">View Seller Profile</a></p> #}
+            </div>
+        </div>
+
+        <!-- Right Column: Order Form -->
+        <div class="col-lg-5">
+            <div class="order-form-card">
+                <h3><i class="bi bi-cart-plus-fill me-2"></i>Purchase Carbon Credits</h3>
+                <div class="price-display text-center">
+                    ${{ "%.2f"|format(credit.price_per_unit) }} / {{ credit.unit }}
+                </div>
+                
+                {% if current_user.is_authenticated %}
+                    {% if current_user.role == UserRole.BUYER %}
+                        <form id="purchaseForm" method="POST" action="{{ url_for("buyer.create_order", credit_id=credit.id) }}">
+                            <div class="mb-3">
+                                <label for="quantity" class="form-label">Purchase Quantity ({{ credit.unit }})</label>
+                                <input type="number" class="form-control" id="quantity" name="quantity" min="1" max="{{ credit.quantity }}" required placeholder="Enter purchase quantity">
+                                <div class="form-text">Available: {{ credit.quantity }}.</div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Estimated Total Amount</label>
+                                <p id="totalPriceDisplay" class="fs-4 fw-bold">$0.00</p>
+                            </div>
+                            <div class="mb-3">
+                                <label for="buyerRemarks" class="form-label">Remarks for Seller (Optional)</label>
+                                <textarea class="form-control" id="buyerRemarks" name="buyer_remarks" rows="3" placeholder="You can leave a message for the seller here"></textarea>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-purchase"><i class="bi bi-bag-check-fill me-2"></i>Submit Purchase Intent</button>
+                            </div>
+                            <p class="text-muted small mt-3">After submission, the seller will receive your purchase intent. Further transaction details will be handled upon seller confirmation.</p>
+                        </form>
+                    {% elif current_user.id == credit.seller_id %}
+                        <div class="alert alert-info">This is one of your listed credits.</div>
+                        {# Add link to edit credit if applicable #}
+                    {% else %}
+                         <div class="alert alert-warning">Only registered buyers can purchase credits.</div>
+                    {% endif %}
+                {% else %}
+                    <div class="alert alert-info">
+                        Please <a href="{{ url_for("auth.login", next=request.url) }}">log in</a> as a buyer to purchase credits or <a href="{{ url_for("auth.register") }}">register</a> for an account.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const quantityInput = document.getElementById("quantity");
+    const totalPriceDisplay = document.getElementById("totalPriceDisplay");
+    const pricePerUnit = parseFloat({{ credit.price_per_unit }});
+    const maxQuantity = parseFloat({{ credit.quantity }});
+
+    if (quantityInput && totalPriceDisplay) {
+        quantityInput.addEventListener("input", function() {
+            let quantity = parseFloat(this.value) || 0;
+            if (quantity < 0) quantity = 0;
+            if (quantity > maxQuantity) {
+                quantity = maxQuantity;
+                this.value = maxQuantity; // Cap at max quantity
+            }
+            const totalPrice = quantity * pricePerUnit;
+            totalPriceDisplay.textContent = `$${totalPrice.toFixed(2)}`;
+        });
+    }
+</script>
+{% endblock %}
+

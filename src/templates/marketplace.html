@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block head_extra %}
+<style>
+    body {
+        background-color: #f4f7f6;
+    }
+    .market-header {
+        background-color: #e9ecef;
+        padding: 40px 0;
+        margin-bottom: 40px;
+        text-align: center;
+    }
+    .market-header h1 {
+        color: #343a40;
+        font-weight: bold;
+    }
+    .filter-sidebar {
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 20px; /* Added margin for smaller screens */
+    }
+    .credit-card {
+        border: none;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        margin-bottom: 20px;
+        background-color: #fff;
+    }
+    .credit-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .credit-card .card-title {
+        color: #007bff;
+        font-weight: bold;
+    }
+    .credit-card .price {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #28a745;
+    }
+    .credit-card .badge-status {
+        font-size: 0.9rem;
+    }
+    .credit-image-placeholder {
+        background-color: #e9ecef;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 150px; /* Ensure placeholder has some height */
+    }
+    .credit-image-placeholder .bi {
+        font-size: 4rem; 
+        color: #adb5bd;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Market Header -->
+<header class="market-header">
+    <div class="container">
+        <h1>Carbon Credit Marketplace</h1>
+        <p class="lead">Explore, filter, and find carbon credit projects that meet your needs.</p>
+    </div>
+</header>
+
+<!-- Main Content: Filters and Listings -->
+<div class="container">
+    <div class="row">
+        <!-- Filters Sidebar -->
+        <aside class="col-lg-3 mb-4">
+            <div class="filter-sidebar">
+                <h4>Filter Criteria</h4>
+                <hr>
+                <form id="filterForm" method="GET" action="{{ url_for('marketplace') }}">
+                    <div class="mb-3">
+                        <label for="searchKeyword" class="form-label">Keyword Search</label>
+                        <input type="text" class="form-control" id="searchKeyword" name="keyword" placeholder="e.g., Solar, Forestry" value="{{ request.args.get('keyword', '') }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="projectType" class="form-label">Project Type</label>
+                        <select class="form-select" id="projectType" name="project_type">
+                            <option value="" {% if not request.args.get('project_type') %}selected{% endif %}>All Types</option>
+                            <option value="Solar" {% if request.args.get('project_type') == 'Solar' %}selected{% endif %}>Solar</option>
+                            <option value="Wind Power" {% if request.args.get('project_type') == 'Wind Power' %}selected{% endif %}>Wind Power</option>
+                            <option value="Forestry Carbon Sink" {% if request.args.get('project_type') == 'Forestry Carbon Sink' %}selected{% endif %}>Forestry Carbon Sink</option>
+                            <option value="Methane Capture" {% if request.args.get('project_type') == 'Methane Capture' %}selected{% endif %}>Methane Capture</option>
+                            <option value="Energy Efficiency" {% if request.args.get('project_type') == 'Energy Efficiency' %}selected{% endif %}>Energy Efficiency</option>
+                            <option value="Other" {% if request.args.get('project_type') == 'Other' %}selected{% endif %}>Other</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="minPrice" class="form-label">Min Price ($)</label>
+                        <input type="number" class="form-control" id="minPrice" name="min_price" placeholder="e.g., 5" step="0.01" value="{{ request.args.get('min_price', '') }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="maxPrice" class="form-label">Max Price ($)</label>
+                        <input type="number" class="form-control" id="maxPrice" name="max_price" placeholder="e.g., 50" step="0.01" value="{{ request.args.get('max_price', '') }}">
+                    </div>
+                     <div class="mb-3">
+                        <label for="sortBy" class="form-label">Sort By:</label>
+                        <select class="form-select" id="sortBy" name="sort_by">
+                            <option value="latest" {% if request.args.get('sort_by', 'latest') == 'latest' %}selected{% endif %}>Latest Listings</option>
+                            <option value="price_asc" {% if request.args.get('sort_by') == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
+                            <option value="price_desc" {% if request.args.get('sort_by') == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
+                            <option value="quantity_desc" {% if request.args.get('sort_by') == 'quantity_desc' %}selected{% endif %}>Quantity: High to Low</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
+                </form>
+            </div>
+        </aside>
+
+        <!-- Carbon Credit Listings -->
+        <section class="col-lg-9">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span id="resultsCount">Showing {{ credits|length }} result(s)</span>
+            </div>
+
+            {% if credits %}
+                {% for credit in credits %}
+                <div class="card credit-card">
+                    <div class="row g-0">
+                        <div class="col-md-3 d-flex align-items-center justify-content-center p-3 credit-image-placeholder">
+                            {% if credit.image_filename %}
+                                <img src="{{ url_for('uploaded_file', subfolder='credits', filename=credit.image_filename) }}" class="img-fluid rounded-start" alt="{{ credit.title }}" style="max-height: 150px; object-fit: cover;">
+                            {% else %}
+                                <i class="bi bi-images"></i> <!-- Default placeholder icon -->
+                            {% endif %}
+                        </div>
+                        <div class="col-md-9">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ credit.title }}</h5>
+                                <p class="card-text"><small class="text-muted">Seller: {{ credit.seller.company_name if credit.seller.company_name else credit.seller.username }}</small></p>
+                                <p class="card-text">{{ credit.description|truncate(150) }}</p>
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="price">${{ "%.2f"|format(credit.price_per_unit) }} / {{ credit.unit }}</span>
+                                    <span class="badge rounded-pill bg-success badge-status">{{ credit.status.value|replace('_', ' ')|title }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center text-muted small">
+                                    <span>Available: {{ credit.quantity }} {{ credit.unit }}</span>
+                                    <span>Type: {{ credit.source_project_type if credit.source_project_type else 'N/A' }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center text-muted small mt-1">
+                                    <span>Location: {{ credit.source_project_location if credit.source_project_location else 'N/A' }}</span>
+                                    <span>Expires: {{ credit.validity_end_date.strftime('%Y-%m-%d') if credit.validity_end_date else 'N/A' }}</span>
+                                </div>
+                                <a href="{{ url_for('credit_detail', credit_id=credit.id) }}" class="btn btn-outline-primary btn-sm mt-3">View Details & Purchase</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="alert alert-info" role="alert">
+                    No carbon credits currently available matching your criteria. Please check back later or adjust your filters.
+                </div>
+            {% endif %}
+
+            <!-- Pagination -->
+            {% if pagination and pagination.pages > 1 %}
+            <nav aria-label="Marketplace pagination" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    <!-- Previous Page Link -->
+                    <li class="page-item {% if not pagination.has_prev %}disabled{% endif %}">
+                        <a class="page-link" href="{% if pagination.has_prev %}{{ url_for('marketplace', page=pagination.prev_num, **request.args) }}{% else %}#{% endif %}">Previous</a>
+                    </li>
+                    <!-- Page Numbers -->
+                    {% for page_num in pagination.iter_pages() %}
+                        {% if page_num %}
+                            <li class="page-item {% if page_num == pagination.page %}active{% endif %}">
+                                <a class="page-link" href="{{ url_for('marketplace', page=page_num, **request.args) }}">{{ page_num }}</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                        {% endif %}
+                    {% endfor %}
+                    <!-- Next Page Link -->
+                    <li class="page-item {% if not pagination.has_next %}disabled{% endif %}">
+                        <a class="page-link" href="{% if pagination.has_next %}{{ url_for('marketplace', page=pagination.next_num, **request.args) }}{% else %}#{% endif %}">Next</a>
+                    </li>
+                </ul>
+            </nav>
+            {% endif %}
+        </section>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Any specific JS for marketplace page can go here
+</script>
+{% endblock %}
+

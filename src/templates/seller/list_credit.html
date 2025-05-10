@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>{{ title }}</h2>
+    <hr>
+    <form method="POST" enctype="multipart/form-data">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">Credit Information</div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Credit Title <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="title" name="title" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="description" name="description" rows="5" required></textarea>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="quantity" class="form-label">Quantity Available <span class="text-danger">*</span></label>
+                                <input type="number" step="0.01" class="form-control" id="quantity" name="quantity" required min="0.01">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="unit" class="form-label">Unit (e.g., ton CO2e)</label>
+                                <input type="text" class="form-control" id="unit" name="unit" value="ton CO2e">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="price_per_unit" class="form-label">Price per Unit (USD) <span class="text-danger">*</span></label>
+                            <input type="number" step="0.01" class="form-control" id="price_per_unit" name="price_per_unit" required min="0.01">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card mb-3">
+                    <div class="card-header">Project Details</div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="source_project_type" class="form-label">Source Project Type</label>
+                            <input type="text" class="form-control" id="source_project_type" name="source_project_type" placeholder="e.g., Renewable Energy, Reforestation">
+                        </div>
+                        <div class="mb-3">
+                            <label for="source_project_location" class="form-label">Source Project Location</label>
+                            <input type="text" class="form-control" id="source_project_location" name="source_project_location" placeholder="e.g., Country, Region">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="validity_start_date" class="form-label">Validity Start Date</label>
+                                <input type="date" class="form-control" id="validity_start_date" name="validity_start_date">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="validity_end_date" class="form-label">Validity End Date</label>
+                                <input type="date" class="form-control" id="validity_end_date" name="validity_end_date">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">Supporting Documents</div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="image_filename" class="form-label">Promotional Image (Optional)</label>
+                            <input type="file" class="form-control" id="image_filename" name="image_filename" accept="image/png, image/jpeg, image/gif">
+                            <small class="form-text text-muted">Allowed formats: PNG, JPG, GIF. Max size: 16MB.</small>
+                        </div>
+                        <div class="mb-3">
+                            <label for="verification_details_filename" class="form-label">Verification Document (Optional)</label>
+                            <input type="file" class="form-control" id="verification_details_filename" name="verification_details_filename" accept=".pdf, image/png, image/jpeg">
+                            <small class="form-text text-muted">Allowed formats: PDF, PNG, JPG. Max size: 16MB.</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-4 text-center">
+            <button type="submit" class="btn btn-primary btn-lg">Submit Credit for Approval</button>
+            <a href="{{ url_for("seller.dashboard") }}" class="btn btn-secondary btn-lg">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+

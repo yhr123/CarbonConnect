@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Terms of Service - CarbonConnect{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h1 class="h3 mb-0">Terms of Service</h1>
+                </div>
+                <div class="card-body" style="line-height: 1.8;">
+                    <p class="text-muted">Last Updated: {{ now.strftime("%B %d, %Y") }}</p>
+
+                    <h2 class="h5 mt-4 mb-3">1. Agreement to Terms</h2>
+                    <p>By accessing or using the CarbonConnect website and services (collectively, the "Service"), you agree to be bound by these Terms of Service ("Terms"). If you disagree with any part of the terms, then you may not access the Service. We reserve the right to modify these Terms at any time. All changes will be effective immediately upon posting to the Service and, by accessing or using the Service after changes are posted, you agree to those changes.</p>
+
+                    <h2 class="h5 mt-4 mb-3">2. Description of Service</h2>
+                    <p>CarbonConnect provides an online platform that connects sellers of voluntary carbon credits with potential buyers. We facilitate the display of carbon credit information and initial contact between users. We are not a party to any transaction between users, nor are we an issuer, broker, or dealer of carbon credits. We do not guarantee the quality, legality, or safety of credits listed, nor the truth or accuracy of listings.</p>
+
+                    <h2 class="h5 mt-4 mb-3">3. User Accounts</h2>
+                    <p>To access certain features of the Service, you must register for an account. When you register for an account, you may be required to provide us with some information about yourself, such as your email address or other contact information. You agree that the information you provide to us is accurate and that you will keep it accurate and up-to-date at all times. You are solely responsible for maintaining the confidentiality of your account and password, and you accept responsibility for all activities that occur under your account.</p>
+
+                    <h2 class="h5 mt-4 mb-3">4. User Conduct and Responsibilities</h2>
+                    <p>You agree not to use the Service for any unlawful purpose or in any way that interrupts, damages, or impairs the service. You are responsible for ensuring that any information or content you post, including carbon credit listings, is accurate, lawful, and does not infringe upon the rights of any third party. Sellers are responsible for the verification and authenticity of the carbon credits they list. Buyers are responsible for conducting their own due diligence before purchasing any credits.</p>
+
+                    <h2 class="h5 mt-4 mb-3">5. Carbon Credit Listings and Transactions</h2>
+                    <p>Sellers may list carbon credits for sale on the platform. All listings are subject to review and approval by CarbonConnect administrators. We reserve the right to remove any listing at our discretion. Transactions for carbon credits are conducted offline between the buyer and seller. CarbonConnect facilitates the generation of a digitally signed PDF certificate upon confirmation of a transaction by the seller on the platform, but this certificate serves as a record of the platform-facilitated connection and seller-confirmed transaction, not as a guarantee or validation of the underlying credit by CarbonConnect.</p>
+
+                    <h2 class="h5 mt-4 mb-3">6. Intellectual Property</h2>
+                    <p>The Service and its original content (excluding content provided by users), features, and functionality are and will remain the exclusive property of CarbonConnect and its licensors. Our trademarks and trade dress may not be used in connection with any product or service without the prior written consent of CarbonConnect.</p>
+
+                    <h2 class="h5 mt-4 mb-3">7. Disclaimers and Limitation of Liability</h2>
+                    <p>The Service is provided on an "AS IS" and "AS AVAILABLE" basis. CarbonConnect makes no warranties, expressed or implied, regarding the operation of the Service or the information, content, or materials included therein. You expressly agree that your use of the Service is at your sole risk.</p>
+                    <p>In no event shall CarbonConnect, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from (i) your access to or use of or inability to access or use the Service; (ii) any conduct or content of any third party on the Service; (iii) any content obtained from the Service; and (iv) unauthorized access, use or alteration of your transmissions or content, whether based on warranty, contract, tort (including negligence) or any other legal theory, whether or not we have been informed of the possibility of such damage.</p>
+
+                    <h2 class="h5 mt-4 mb-3">8. Governing Law</h2>
+                    <p>These Terms shall be governed and construed in accordance with the laws of [Your Jurisdiction, e.g., State of California, USA], without regard to its conflict of law provisions.</p>
+
+                    <h2 class="h5 mt-4 mb-3">9. Changes to Terms</h2>
+                    <p>We reserve the right, at our sole discretion, to modify or replace these Terms at any time. If a revision is material, we will provide at least 30 days notice prior to any new terms taking effect. What constitutes a material change will be determined at our sole discretion.</p>
+
+                    <h2 class="h5 mt-4 mb-3">10. Contact Us</h2>
+                    <p>If you have any questions about these Terms, please contact us at contact@carbonconnect.example.com or by post to:</p>
+                    <p>CarbonConnect<br>
+                    [Your Company Address Line 1]<br>
+                    [Your Company Address Line 2]<br>
+                    [City, Postal Code]<br>
+                    [Country]</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

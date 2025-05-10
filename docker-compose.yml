@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  flask_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: carbonconnect_flask_app
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./src:/app/src # Mount src for development, can be removed if building a production image with code copied in
+      - ./uploads:/app/uploads # Mount uploads folder to persist uploaded files
+      - ./src/database:/app/src/database # Mount database folder to persist SQLite DB file
+    environment:
+      - FLASK_ENV=development # Change to 'production' for production
+      - PYTHONUNBUFFERED=1 # Ensures print statements are sent directly to terminal
+    networks:
+      - carbonconnect_network
+
+networks:
+  carbonconnect_network:
+    driver: bridge
+

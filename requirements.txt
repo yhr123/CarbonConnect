@@ -1,0 +1,12 @@
+Flask==3.0.3
+Flask-SQLAlchemy==3.1.1
+SQLAlchemy==2.0.29
+Werkzeug==3.0.3
+Jinja2==3.1.4
+itsdangerous==2.2.0
+click==8.1.7
+blinker==1.8.2
+WeasyPrint==62.3
+python-dotenv==1.0.1
+# cryptography library is implicitly used by OpenSSL for some operations, but not directly by the app code for signing via CLI.
+# Ensure OpenSSL CLI is available in the environment (handled in Dockerfile).

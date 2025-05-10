@@ -1,0 +1,337 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block head_extra %}
+<style>
+    .dashboard-card {
+        border-left-width: .25rem;
+        border-radius: .25rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 .125rem .25rem rgba(0,0,0,.075)!important;
+    }
+    .border-left-primary {
+        border-left-color: #007bff!important;
+    }
+    .border-left-success {
+        border-left-color: #28a745!important;
+    }
+    .border-left-info {
+        border-left-color: #17a2b8!important;
+    }
+    .border-left-warning {
+        border-left-color: #ffc107!important;
+    }
+    .dashboard-card .card-body {
+        padding: 1.25rem;
+    }
+    .dashboard-card .text-xs {
+        font-size: .7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        margin-bottom: .25rem;
+    }
+    .dashboard-card .h5 {
+        font-weight: 700;
+        margin-bottom: 0;
+    }
+    .dashboard-card .icon-circle {
+        height: 2.5rem;
+        width: 2.5rem;
+        border-radius: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .dashboard-card .icon-circle i {
+        color: #fff;
+        font-size: 1.25rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4 mb-4">Seller Dashboard</h1>
+
+    <!-- Icon Cards-->
+    <div class="row">
+        <div class="col-xl-3 col-md-6">
+            <div class="card dashboard-card border-left-primary">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Credits Listed</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.total_listed }}</div>
+                        </div>
+                        <div class="col-auto"><div class="icon-circle bg-primary"><i class="bi bi-card-list"></i></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card dashboard-card border-left-warning">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Pending Approval</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.pending_approval }}</div>
+                        </div>
+                        <div class="col-auto"><div class="icon-circle bg-warning"><i class="bi bi-hourglass-split"></i></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card dashboard-card border-left-success">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Approved & Active</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.approved_active }}</div>
+                        </div>
+                        <div class="col-auto"><div class="icon-circle bg-success"><i class="bi bi-patch-check-fill"></i></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card dashboard-card border-left-info">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Credits Sold</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.sold }}</div>
+                        </div>
+                        <div class="col-auto"><div class="icon-circle bg-info"><i class="bi bi-tags-fill"></i></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-2">
+         <div class="col-xl-3 col-md-6">
+            <div class="card dashboard-card border-left-secondary">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">Total Orders Received</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.total_orders }}</div>
+                        </div>
+                        <div class="col-auto"><div class="icon-circle bg-secondary"><i class="bi bi-cart3"></i></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card dashboard-card border-left-danger">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Orders Pending Your Action</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.pending_action_orders }}</div>
+                        </div>
+                        <div class="col-auto"><div class="icon-circle bg-danger"><i class="bi bi-exclamation-circle-fill"></i></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+         <div class="col-xl-3 col-md-6">
+            <div class="card dashboard-card border-left-success">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Confirmed/Completed Orders</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.confirmed_orders }}</div>
+                        </div>
+                        <div class="col-auto"><div class="icon-circle bg-success"><i class="bi bi-check-circle-fill"></i></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="my-4">
+        <a href="{{ url_for('seller.list_credit') }}" class="btn btn-primary"><i class="bi bi-plus-circle-fill me-2"></i>List New Carbon Credit</a>
+    </div>
+
+    <!-- Listed Credits -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="bi bi-archive-fill me-1"></i>
+            Your Listed Carbon Credits
+        </div>
+        <div class="card-body">
+            {% if listed_credits %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Quantity</th>
+                            <th>Price/Unit</th>
+                            <th>Status</th>
+                            <th>Submitted On</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for credit in listed_credits %}
+                        <tr>
+                            <td><a href="{{ url_for('credit_detail', credit_id=credit.id) }}">{{ credit.title }}</a></td>
+                            <td>{{ credit.quantity }} {{ credit.unit }}</td>
+                            <td>${{ "%.2f"|format(credit.price_per_unit) }}</td>
+                            <td>
+                                <span class="badge 
+                                {% if credit.status == CreditStatus.APPROVED %}bg-success
+                                {% elif credit.status == CreditStatus.PENDING_APPROVAL %}bg-warning text-dark
+                                {% elif credit.status == CreditStatus.REJECTED %}bg-danger
+                                {% elif credit.status == CreditStatus.SOLD %}bg-info
+                                {% else %}bg-secondary
+                                {% endif %}">
+                                    {{ credit.status.value|replace("_", " ")|title }}
+                                </span>
+                            </td>
+                            <td>{{ credit.submitted_at|datetimeformat }}</td>
+                            <td>
+                                <a href="{{ url_for('credit_detail', credit_id=credit.id) }}" class="btn btn-sm btn-outline-info">View</a>
+                                <!-- Add Edit/Delete if status allows -->
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p>You have not listed any carbon credits yet.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Received Orders -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="bi bi-cart-check-fill me-1"></i>
+            Orders Received
+        </div>
+        <div class="card-body">
+            {% if received_orders %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Buyer</th>
+                            <th>Credit Title</th>
+                            <th>Qty Ordered</th>
+                            <th>Total Price</th>
+                            <th>Order Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in received_orders %}
+                        <tr>
+                            <td>#{{ order.id }}</td>
+                            <td>{{ order.buyer.username }}</td>
+                            <td><a href="{{ url_for('credit_detail', credit_id=order.credit_id) }}">{{ order.carbon_credit.title }}</a></td>
+                            <td>{{ order.quantity_ordered }}</td>
+                            <td>${{ "%.2f"|format(order.total_price) }}</td>
+                            <td>{{ order.order_date|datetimeformat }}</td>
+                            <td>
+                                <span class="badge 
+                                {% if order.status == OrderStatus.COMPLETED %}bg-success
+                                {% elif order.status == OrderStatus.CONFIRMED_BY_SELLER %}bg-primary
+                                {% elif order.status == OrderStatus.PENDING_SELLER_ACTION %}bg-warning text-dark
+                                {% elif order.status == OrderStatus.REJECTED_BY_SELLER %}bg-danger
+                                {% elif order.status == OrderStatus.CANCELLED_BY_BUYER %}bg-secondary
+                                {% else %}bg-light text-dark
+                                {% endif %}">
+                                    {{ order.status.value|replace("_", " ")|title }}
+                                </span>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-outline-info mb-1" data-bs-toggle="modal" data-bs-target="#orderDetailModalSeller{{ order.id }}">
+                                    View Details
+                                </button>
+                                {% if order.status == OrderStatus.PENDING_SELLER_ACTION %}
+                                    <form method="POST" action="{{ url_for('seller.confirm_order', order_id=order.id) }}" class="d-inline-block mb-1">
+                                        <button type="submit" class="btn btn-sm btn-success">Confirm</button>
+                                    </form>
+                                    <button type="button" class="btn btn-sm btn-danger mb-1" data-bs-toggle="modal" data-bs-target="#rejectOrderModal{{ order.id }}">
+                                        Reject
+                                    </button>
+                                {% endif %}
+
+                                <!-- Order Detail Modal (Seller) -->
+                                <div class="modal fade" id="orderDetailModalSeller{{ order.id }}" tabindex="-1" aria-labelledby="orderDetailModalSellerLabel{{ order.id }}" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="orderDetailModalSellerLabel{{ order.id }}">Order #{{ order.id }} Details</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p><strong>Buyer:</strong> {{ order.buyer.username }} ({{ order.buyer.email }})</p>
+                                                <p><strong>Credit:</strong> {{ order.carbon_credit.title }}</p>
+                                                <p><strong>Quantity Ordered:</strong> {{ order.quantity_ordered }} {{ order.carbon_credit.unit }}</p>
+                                                <p><strong>Price per Unit at Order:</strong> ${{ "%.2f"|format(order.price_per_unit_at_order) }}</p>
+                                                <p><strong>Total Price:</strong> ${{ "%.2f"|format(order.total_price) }}</p>
+                                                <p><strong>Order Date:</strong> {{ order.order_date|datetimeformat }}</p>
+                                                <p><strong>Status:</strong> {{ order.status.value|replace("_", " ")|title }}</p>
+                                                <p><strong>Buyer Remarks:</strong> {{ order.buyer_remarks if order.buyer_remarks else "N/A" }}</p>
+                                                <p><strong>Your Remarks:</strong> {{ order.seller_remarks if order.seller_remarks else "N/A" }}</p>
+                                                <p><strong>Action Date:</strong> {{ order.seller_action_date|datetimeformat if order.seller_action_date else "N/A" }}</p>
+                                                <p><strong>Completion Date:</strong> {{ order.completion_date|datetimeformat if order.completion_date else "N/A" }}</p>
+                                                {% if order.pdf_certificate_filename %}
+                                                    <p><strong>Generated Certificate:</strong> <a href="{{ url_for('uploaded_file', subfolder='certificates', filename=order.pdf_certificate_filename) }}" target="_blank">View Unsigned PDF</a></p>
+                                                {% endif %}
+                                                {% if order.signed_pdf_certificate_filename %}
+                                                    <p><strong>Signed Certificate:</strong> <a href="{{ url_for('uploaded_file', subfolder='certificates/signed', filename=order.signed_pdf_certificate_filename) }}" target="_blank">View Signed PDF (.p7m)</a></p>
+                                                {% endif %}
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Reject Order Modal -->
+                                <div class="modal fade" id="rejectOrderModal{{ order.id }}" tabindex="-1" aria-labelledby="rejectOrderModalLabel{{ order.id }}" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <form method="POST" action="{{ url_for('seller.reject_order', order_id=order.id) }}">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="rejectOrderModalLabel{{ order.id }}">Reject Order #{{ order.id }}</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="mb-3">
+                                                        <label for="seller_remarks_{{ order.id }}" class="form-label">Reason for Rejection (Optional)</label>
+                                                        <textarea class="form-control" id="seller_remarks_{{ order.id }}" name="seller_remarks" rows="3"></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                    <button type="submit" class="btn btn-danger">Confirm Rejection</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p>You have not received any orders yet.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+

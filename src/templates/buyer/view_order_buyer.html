@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">{{ title }}</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <p><strong>Order ID:</strong> #{{ order.id }}</p>
+                            <p><strong>Order Date:</strong> {{ order.order_date|datetimeformat }}</p>
+                            <p><strong>Status:</strong> 
+                                <span class="badge 
+                                {% if order.status == OrderStatus.COMPLETED %}bg-success
+                                {% elif order.status == OrderStatus.CONFIRMED_BY_SELLER %}bg-primary
+                                {% elif order.status == OrderStatus.PENDING_SELLER_ACTION %}bg-warning text-dark
+                                {% elif order.status == OrderStatus.REJECTED_BY_SELLER %}bg-danger
+                                {% elif order.status == OrderStatus.CANCELLED_BY_BUYER %}bg-secondary
+                                {% else %}bg-light text-dark
+                                {% endif %}">
+                                    {{ order.status.value|replace("_", " ")|title }}
+                                </span>
+                            </p>
+                        </div>
+                        <div class="col-md-6 text-md-end">
+                            {% if order.status == OrderStatus.COMPLETED and order.signed_pdf_certificate_filename %}
+                                <a href="{{ url_for('uploaded_file', subfolder='certificates/signed', filename=order.signed_pdf_certificate_filename) }}" class="btn btn-success btn-lg" target="_blank">
+                                    <i class="bi bi-file-earmark-arrow-down-fill me-2"></i>Download Signed Certificate (.p7m)
+                                </a>
+                            {% elif order.status == OrderStatus.COMPLETED and order.pdf_certificate_filename and not order.signed_pdf_certificate_filename %}
+                                <a href="{{ url_for('uploaded_file', subfolder='certificates', filename=order.pdf_certificate_filename) }}" class="btn btn-info btn-lg" target="_blank">
+                                    <i class="bi bi-file-earmark-arrow-down me-2"></i>Download Unsigned Certificate (PDF)
+                                </a>
+                                <p class="text-muted small mt-1">Signed certificate is pending or encountered an issue.</p>
+                            {% elif order.status == OrderStatus.PENDING_SELLER_ACTION %}
+                                <form method="POST" action="{{ url_for('buyer.cancel_order', order_id=order.id) }}" class="d-inline" onsubmit="return confirm('Are you sure you want to cancel this order?');">
+                                    <button type="submit" class="btn btn-danger btn-lg"><i class="bi bi-x-circle-fill me-2"></i>Cancel Order</button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    <h5>Credit Details</h5>
+                  <p><strong>Title:</strong> <a href="{{ url_for('credit_detail', credit_id=order.carbon_credit.id) }}">{{ order.carbon_credit.title }}</a></p>                    <p><strong>Description:</strong> {{ order.carbon_credit.description }}</p>
+                    <p><strong>Quantity Ordered:</strong> {{ order.quantity_ordered }} {{ order.carbon_credit.unit }}</p>
+                    <p><strong>Price per Unit at Order:</strong> ${{ "%.2f"|format(order.price_per_unit_at_order) }}</p>
+                    <p><strong>Total Price:</strong> ${{ "%.2f"|format(order.total_price) }}</p>
+                    
+                    <hr>
+                    <h5>Seller Information</h5>
+                    <p><strong>Seller:</strong> {{ order.seller_user.username }}</p>
+                    <p><strong>Company:</strong> {{ order.seller_user.company_name if order.seller_user.company_name else "N/A" }}</p>
+                    <p><strong>Email:</strong> {{ order.seller_user.email }}</p>
+
+                    <hr>
+                    <h5>Your Remarks</h5>
+                    <p>{{ order.buyer_remarks if order.buyer_remarks else "No remarks provided." }}</p>
+
+                    {% if order.seller_remarks %}
+                    <hr>
+                    <h5>Seller Remarks</h5>
+                    <p>{{ order.seller_remarks }}</p>
+                    {% endif %}
+
+                    <hr>
+                    <p><strong>Seller Action Date:</strong> {{ order.seller_action_date|datetimeformat if order.seller_action_date else "Pending Seller Action" }}</p>
+                    <p><strong>Completion Date:</strong> {{ order.completion_date|datetimeformat if order.completion_date else "Not Yet Completed" }}</p>
+
+                    <div class="mt-4">
+                        <a href="{{ url_for('buyer.dashboard') }}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left-circle me-2"></i>Back to Dashboard</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

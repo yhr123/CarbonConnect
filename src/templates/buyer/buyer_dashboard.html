@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>{{ title }}</h2>
+    <hr>
+    {% if orders_placed %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Credit Title</th>
+                        <th>Quantity</th>
+                        <th>Total Price</th>
+                        <th>Order Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders_placed %}
+                    <tr>
+                        <td>#{{ order.id }}</td>
+                        <td><a href="{{ url_for('credit_detail', credit_id=order.credit_id) }}">{{ order.carbon_credit.title }}</a></td>
+                        <td>{{ order.quantity_ordered }} {{ order.carbon_credit.unit }}</td>
+                        <td>${{ "%.2f"|format(order.total_price) }}</td>
+                        <td>{{ order.order_date|datetimeformat }}</td>
+                        <td>
+                            <span class="badge 
+                            {% if order.status == OrderStatus.COMPLETED %}bg-success
+                            {% elif order.status == OrderStatus.CONFIRMED_BY_SELLER %}bg-primary
+                            {% elif order.status == OrderStatus.PENDING_SELLER_ACTION %}bg-warning text-dark
+                            {% elif order.status == OrderStatus.REJECTED_BY_SELLER %}bg-danger
+                            {% elif order.status == OrderStatus.CANCELLED_BY_BUYER %}bg-secondary
+                            {% else %}bg-light text-dark
+                            {% endif %}">
+                                {{ order.status.value|replace("_", " ")|title }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('buyer.view_order', order_id=order.id) }}" class="btn btn-sm btn-info">View Details</a>
+                            {% if order.status == OrderStatus.COMPLETED and order.signed_pdf_certificate_filename %}
+                                <a href="{{ url_for('uploaded_file', subfolder='certificates/signed', filename=order.signed_pdf_certificate_filename) }}" class="btn btn-sm btn-success" target="_blank">Download Certificate</a>
+                            {% elif order.status == OrderStatus.PENDING_SELLER_ACTION %}
+                                <form method="POST" action="{{ url_for('buyer.cancel_order', order_id=order.id) }}" class="d-inline" onsubmit="return confirm('Are you sure you want to cancel this order?');">
+                                    <button type="submit" class="btn btn-sm btn-danger">Cancel Order</button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            You have not placed any orders yet. <a href="{{ url_for('marketplace') }}" class="alert-link">Browse Marketplace</a>.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+

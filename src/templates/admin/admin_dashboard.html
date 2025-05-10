@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block head_extra %}
+<style>
+    .dashboard-card {
+        border-left-width: .25rem;
+        border-radius: .25rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 .125rem .25rem rgba(0,0,0,.075)!important;
+    }
+    .border-left-primary {
+        border-left-color: #007bff!important;
+    }
+    .border-left-success {
+        border-left-color: #28a745!important;
+    }
+    .border-left-info {
+        border-left-color: #17a2b8!important;
+    }
+    .border-left-warning {
+        border-left-color: #ffc107!important;
+    }
+    .dashboard-card .card-body {
+        padding: 1.25rem;
+    }
+    .dashboard-card .text-xs {
+        font-size: .7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        margin-bottom: .25rem;
+    }
+    .dashboard-card .h5 {
+        font-weight: 700;
+        margin-bottom: 0;
+    }
+    .dashboard-card .icon-circle {
+        height: 2.5rem;
+        width: 2.5rem;
+        border-radius: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .dashboard-card .icon-circle i {
+        color: #fff;
+        font-size: 1.25rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4 mb-4">Admin Dashboard</h1>
+
+    <!-- Icon Cards-->
+    <div class="row">
+        <div class="col-xl-3 col-md-6">
+            <div class="card dashboard-card border-left-primary">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Credits Pending Approval</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ pending_credits }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="icon-circle bg-primary">
+                                <i class="bi bi-hourglass-split"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card dashboard-card border-left-success">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Approved & Active Credits</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ approved_credits }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="icon-circle bg-success">
+                                <i class="bi bi-patch-check-fill"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card dashboard-card border-left-info">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Total Users
+                            </div>
+                            <div class="row no-gutters align-items-center">
+                                <div class="col-auto">
+                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{ total_users }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="icon-circle bg-info">
+                                <i class="bi bi-people-fill"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card dashboard-card border-left-warning">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Total Orders Placed</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_orders }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="icon-circle bg-warning">
+                                <i class="bi bi-cart-check-fill"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mt-4">
+        <div class="col-lg-12">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="bi bi-lightning-charge-fill me-1"></i>
+                    Quick Actions
+                </div>
+                <div class="card-body">
+                    <a href="{{ url_for('admin.credits_for_approval') }}" class="btn btn-primary me-2 mb-2">Manage Credit Approvals <span class="badge bg-danger">{{ pending_credits }}</span></a>
+                    <a href="{{ url_for('admin.manage_users') }}" class="btn btn-info me-2 mb-2">Manage Users</a>
+                    <a href="{{ url_for('admin.view_all_orders') }}" class="btn btn-secondary mb-2">View All Orders</a>
+                    <!-- Add more quick actions as needed -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Placeholder for recent activity or important notices -->
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="bi bi-activity me-1"></i>
+                    Recent Activity (Placeholder)
+                </div>
+                <div class="card-body">
+                    <p>No recent activity to display yet.</p>
+                    <!-- List recent registrations, credit submissions, orders etc. -->
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                    Important Notices (Placeholder)
+                </div>
+                <div class="card-body">
+                    <p>No important notices at this time.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+

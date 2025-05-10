@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Carbon Credit Transaction Certificate</title>
+    <style>
+        @font-face {
+            font-family: "Noto Sans"; /* Using a common name for Noto Sans */
+            src: url("file:///usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc"); /* Assuming NotoSansCJK can render English well */
+        }
+        body {
+            font-family: "Noto Sans", "Helvetica", "Arial", sans-serif;
+            margin: 40px;
+            font-size: 12px;
+            line-height: 1.6;
+            color: #333;
+        }
+        .container {
+            border: 1px solid #ccc;
+            padding: 30px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f9f9f9;
+            font-weight: bold;
+            width: 30%;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 10px;
+            color: #7f8c8d;
+        }
+        .signature-area {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px dashed #ccc;
+            text-align: right;
+        }
+        .platform-stamp {
+            font-weight: bold;
+            color: #3498db;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Carbon Credit Transaction Certificate</h1>
+        
+        <h2>Order ID: {{ order.id }}</h2>
+        
+        <h3>Transaction Parties Information</h3>
+        <table>
+            <tr>
+                <th>Buyer Company/Individual</th>
+                <td>{{ buyer.company_name or buyer.username }}</td>
+            </tr>
+            <tr>
+                <th>Buyer Contact Email</th>
+                <td>{{ buyer.email }}</td>
+            </tr>
+            <tr>
+                <th>Seller Company/Individual</th>
+                <td>{{ seller.company_name or seller.username }}</td>
+            </tr>
+            <tr>
+                <th>Seller Contact Email</th>
+                <td>{{ seller.email }}</td>
+            </tr>
+        </table>
+
+        <h3>Carbon Credit Information</h3>
+        <table>
+            <tr>
+                <th>Credit Title</th>
+                <td>{{ credit.title }}</td>
+            </tr>
+            <tr>
+                <th>Credit Description</th>
+                <td>{{ credit.description }}</td>
+            </tr>
+             <tr>
+                <th>Project Type</th>
+                <td>{{ credit.source_project_type or "Not Provided" }}</td>
+            </tr>
+            <tr>
+                <th>Project Location</th>
+                <td>{{ credit.source_project_location or "Not Provided" }}</td>
+            </tr>
+        </table>
+
+        <h3>Transaction Details</h3>
+        <table>
+            <tr>
+                <th>Quantity Transacted</th>
+                <td>{{ order.quantity_ordered }} {{ credit.unit }}</td>
+            </tr>
+            <tr>
+                <th>Price Per Unit at Transaction</th>
+                <td>${{ "%.2f" | format(order.price_per_unit_at_order) }} / {{ credit.unit }}</td>
+            </tr>
+            <tr>
+                <th>Total Transaction Amount</th>
+                <td>${{ "%.2f" | format(order.total_price) }}</td>
+            </tr>
+            <tr>
+                <th>Order Date</th>
+                <td>{{ order.order_date.strftime("%Y-%m-%d %H:%M:%S") }} UTC</td>
+            </tr>
+            <tr>
+                <th>Seller Confirmation Date</th>
+                <td>{{ order.seller_action_date.strftime("%Y-%m-%d %H:%M:%S") if order.seller_action_date else "N/A" }} UTC</td>
+            </tr>
+            <tr>
+                <th>Transaction Completion Date</th>
+                <td>{{ order.completion_date.strftime("%Y-%m-%d %H:%M:%S") if order.completion_date else "N/A" }} UTC</td>
+            </tr>
+        </table>
+
+        <div class="signature-area">
+            <p>This certificate is automatically generated and recorded by the CarbonConnect Platform.</p>
+            <p class="platform-stamp">CarbonConnect Platform</p>
+            <p>Certificate Generation Time: {{ generation_time }} UTC</p>
+            <p>Digital signature information will be attached to the document properties.</p>
+        </div>
+    </div>
+    <div class="footer">
+        CarbonConnect - Connecting Your Carbon Neutral Future | This certificate serves as a record of the transaction between the parties and does not constitute a legally enforceable transfer of rights. Actual transfer of rights is subject to offline agreements between the parties.
+    </div>
+</body>
+</html>

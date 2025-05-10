@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CarbonConnect - Connecting Your Carbon Neutral Future</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.8;
+        }
+        .hero-section {
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1521791136064-7986c2920216?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Y29ubmVjdGlvbnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=1400&q=80') no-repeat center center;
+            background-size: cover;
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+        }
+        .hero-section h1 {
+            font-size: 3.5rem;
+            font-weight: bold;
+        }
+        .hero-section p {
+            font-size: 1.25rem;
+            margin-bottom: 30px;
+        }
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+            font-weight: bold;
+            color: #343a40;
+        }
+        .feature-icon {
+            font-size: 3rem;
+            color: #0d6efd;
+        }
+        .benefit-card {
+            border: none;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            height: 100%; /* Ensure cards in a row have same height */
+        }
+        .benefit-card:hover {
+            transform: translateY(-10px);
+        }
+        .cta-section {
+            background-color: #f8f9fa;
+            padding: 60px 0;
+        }
+        footer {
+            background-color: #343a40;
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+        }
+        .navbar-brand img {
+            height: 40px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('index') }}">
+                CarbonConnect
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('index') }}#about">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('marketplace') }}">Marketplace</a>
+                    </li>
+                    {% if current_user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownUser" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-circle"></i> {{ current_user.username }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownUser">
+                                {% if current_user.role == UserRole.ADMIN %}
+                                    <li><a class="dropdown-item" href="{{ url_for('admin.dashboard') }}">Admin Dashboard</a></li>
+                                {% elif current_user.role == UserRole.SELLER %}
+                                    <li><a class="dropdown-item" href="{{ url_for('seller.dashboard') }}">Seller Dashboard</a></li>
+                                {% elif current_user.role == UserRole.BUYER %}
+                                    <li><a class="dropdown-item" href="{{ url_for('buyer.dashboard') }}">Buyer Dashboard</a></li>
+                                {% endif %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">Logout</a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link btn btn-primary text-white btn-sm" href="{{ url_for('auth.register') }}">Register</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero-section">
+        <div class="container">
+            <h1>CarbonConnect</h1>
+            <p>Connecting buyers and sellers in the voluntary carbon market to create a sustainable green future.</p>
+            <a href="{{ url_for('marketplace') }}" class="btn btn-primary btn-lg">Go to Marketplace</a>
+            <a href="{{ url_for('auth.register') }}" class="btn btn-outline-light btn-lg ms-2">Register Now</a>
+        </div>
+    </header>
+
+    <!-- About Us (Platform Background) -->
+    <section id="about" class="py-5">
+        <div class="container">
+            <h2 class="section-title">About CarbonConnect</h2>
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p>In the global wave of addressing climate change, carbon neutrality has become an indispensable development goal for businesses and organizations. However, many entities with surplus carbon credits (such as renewable energy projects) and companies seeking carbon offsets to achieve neutrality goals lack an efficient, transparent, and trustworthy bridge. Traditional carbon trading markets often have high barriers to entry and complex processes, especially for participants in the voluntary carbon market, where information asymmetry and inefficient transactions are common pain points.</p>
+                    <p>CarbonConnect was created to build a C2C (Customer-to-Customer) information matching platform focused on the voluntary carbon market. We do not directly participate in the issuance of carbon credits or government quota trading. Instead, we are committed to providing a convenient and secure space for sellers holding verified carbon credits and buyers with carbon offset needs to display information and make initial contact. Our core mission is to promote the effective flow of carbon credits, accelerate green transformation, and contribute to global sustainable development.</p>
+                </div>
+                <div class="col-md-6 text-center">
+                    <img src="https://images.unsplash.com/photo-1488229297570-58520851e868?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8ZWNvbG9neXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60" class="img-fluid rounded shadow" alt="Green Ecology">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Challenges and Pain Points -->
+    <section id="challenges" class="py-5 bg-light">
+        <div class="container">
+            <h2 class="section-title">Current Carbon Market Challenges</h2>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="card benefit-card">
+                        <div class="card-body text-center">
+                            <div class="feature-icon mb-3"><i class="bi bi-search"></i></div>
+                            <h5 class="card-title">Information Asymmetry</h5>
+                            <p class="card-text">Buyers and sellers struggle to effectively find suitable trading partners. The quality, source, and price of carbon credits lack transparency, increasing search costs and risks.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card benefit-card">
+                        <div class="card-body text-center">
+                            <div class="feature-icon mb-3"><i class="bi bi-shield-slash"></i></div>
+                            <h5 class="card-title">Lack of Trust Mechanisms</h5>
+                            <p class="card-text">The quality of carbon credits in the voluntary market varies. A lack of unified verification standards and effective traceability mechanisms makes buyers doubt their authenticity and validity.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card benefit-card">
+                        <div class="card-body text-center">
+                            <div class="feature-icon mb-3"><i class="bi bi-diagram-3"></i></div>
+                            <h5 class="card-title">Cumbersome Transaction Processes</h5>
+                            <p class="card-text">Traditional carbon trading processes can involve complex contract negotiations and lengthy approval procedures, posing high barriers and low efficiency for SMEs or new entrants.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Our Solution (Platform Goals and Appeal) -->
+    <section id="solution" class="py-5">
+        <div class="container">
+            <h2 class="section-title">CarbonConnect's Solution</h2>
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <img src="https://images.unsplash.com/photo-1518495973542-4542c06a5843?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fHNvbHV0aW9ufGVufDB8fDB8fHww&auto=format&fit=crop&w=800&q=60" class="img-fluid rounded shadow" alt="Solution Diagram">
+                </div>
+                <div class="col-md-6">
+                    <p>CarbonConnect is committed to overcoming these challenges by providing a clear, efficient, and trustworthy platform for participants in the voluntary carbon market:</p>
+                    <ul>
+                        <li><strong>Transparent Information Platform:</strong> We offer a centralized marketplace for carbon credit information, where sellers can detail the source, quantity, validity period, and relevant verification documents of their credits. Buyers can easily search and compare, reducing information acquisition costs.</li>
+                        <li><strong>Strict Review Mechanism:</strong> All carbon credits listed on the platform undergo an initial review by administrators to ensure the completeness and compliance of basic information, enhancing the overall credibility of the market.</li>
+                        <li><strong>Simplified Connection Process:</strong> The platform focuses on information matching. Buyers can directly express purchase intent for interesting carbon credits. Sellers receive notifications and can then communicate and confirm offline, significantly simplifying the initial contact phase of traditional transactions.</li>
+                        <li><strong>Secure Transaction Certificates:</strong> Once buyers and sellers reach an offline agreement and the seller confirms the transaction on the platform, the system automatically generates a PDF certificate containing transaction details. This certificate is digitally signed using OpenSSL to ensure the authenticity and immutability of the transaction record, providing reliable proof of transaction for both parties.</li>
+                        <li><strong>Promoting Sustainable Development:</strong> Through CarbonConnect, we aim to inspire more businesses to participate in carbon reduction and offsetting actions, jointly promoting the development of a green economy and achieving a win-win for environmental protection and business value.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section id="how-it-works" class="py-5 bg-light">
+        <div class="container">
+            <h2 class="section-title">Platform Workflow</h2>
+            <div class="row text-center">
+                <div class="col-md-3 mb-4">
+                    <div class="card benefit-card">
+                        <div class="card-body">
+                            <div class="feature-icon mb-3 h1">1</div>
+                            <h5 class="card-title">Seller Registration & Listing</h5>
+                            <p class="card-text">Sellers register an account, submit detailed carbon credit information and supporting documents, and await administrator review.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <div class="card benefit-card">
+                        <div class="card-body">
+                            <div class="feature-icon mb-3 h1">2</div>
+                            <h5 class="card-title">Admin Review</h5>
+                            <p class="card-text">Platform administrators review the completeness and compliance of carbon credit information. Approved credits are displayed in the marketplace.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <div class="card benefit-card">
+                        <div class="card-body">
+                            <div class="feature-icon mb-3 h1">3</div>
+                            <h5 class="card-title">Buyer Browsing & Ordering</h5>
+                            <p class="card-text">Buyers browse and filter carbon credits in the marketplace and initiate purchase intent orders for desired credits.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <div class="card benefit-card">
+                        <div class="card-body">
+                            <div class="feature-icon mb-3 h1">4</div>
+                            <h5 class="card-title">Transaction Confirmation & Certificate</h5>
+                            <p class="card-text">Sellers confirm orders, and the transaction is completed offline. The platform generates a digitally signed PDF transaction certificate.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section id="register-now" class="cta-section py-5">
+        <div class="container text-center">
+            <h2 class="section-title">Join CarbonConnect, Create a Green Future Together</h2>
+            <p class="lead mb-4">Whether you own carbon credits and want to realize their value, or are looking for reliable carbon offset channels, CarbonConnect is your ideal choice.</p>
+            <a href="{{ url_for('auth.register', role='seller') }}" class="btn btn-success btn-lg">Register as a Seller</a>
+            <a href="{{ url_for('auth.register', role='buyer') }}" class="btn btn-info btn-lg ms-2">Register as a Buyer</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-4">
+        <div class="container text-center">
+            <p>&copy; {{ now.year }} CarbonConnect. All Rights Reserved. | <a href="{{ url_for('privacy_policy') }}" class="text-white">Privacy Policy</a> | <a href="{{ url_for('terms_of_service') }}" class="text-white">Terms of Service</a></p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

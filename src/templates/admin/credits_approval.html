@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4 mb-4">Carbon Credits for Approval</h1>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="bi bi-list-check me-1"></i>
+            Pending Approval Queue
+        </div>
+        <div class="card-body">
+            {% if credits %}
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Seller</th>
+                            <th>Quantity</th>
+                            <th>Price/Unit</th>
+                            <th>Submitted On</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for credit in credits %}
+                        <tr>
+                            <td>{{ credit.id }}</td>
+                            <td><a href="{{ url_for('credit_detail', credit_id=credit.id) }}">{{ credit.title }}</a></td>
+                            <td>{{ credit.seller.username }} ({{ credit.seller.company_name if credit.seller.company_name else "N/A" }})</td>
+                            <td>{{ credit.quantity }} {{ credit.unit }}</td>
+                            <td>${{ "%.2f"|format(credit.price_per_unit) }}</td>
+                            <td>{{ credit.submitted_at|datetimeformat }}</td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-info mb-1" data-bs-toggle="modal" data-bs-target="#creditDetailModal{{ credit.id }}">
+                                    View Details
+                                </button>
+                                <form method="POST" action="{{ url_for('admin.approve_credit', credit_id=credit.id) }}" class="d-inline-block mb-1">
+                                    <input type="hidden" name="admin_remarks" value="Approved by admin.">
+                                    <button type="submit" class="btn btn-sm btn-success">Approve</button>
+                                </form>
+                                <button type="button" class="btn btn-sm btn-danger mb-1" data-bs-toggle="modal" data-bs-target="#rejectModal{{ credit.id }}">
+                                    Reject
+                                </button>
+
+                                <!-- Credit Detail Modal -->
+                                <div class="modal fade" id="creditDetailModal{{ credit.id }}" tabindex="-1" aria-labelledby="creditDetailModalLabel{{ credit.id }}" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="creditDetailModalLabel{{ credit.id }}">Credit Details: {{ credit.title }}</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p><strong>Seller:</strong> {{ credit.seller.username }}</p>
+                                                <p><strong>Description:</strong> {{ credit.description }}</p>
+                                                <p><strong>Quantity:</strong> {{ credit.quantity }} {{ credit.unit }}</p>
+                                                <p><strong>Price:</strong> ${{ "%.2f"|format(credit.price_per_unit) }} / {{ credit.unit }}</p>
+                                                <p><strong>Project Type:</strong> {{ credit.source_project_type if credit.source_project_type else "N/A" }}</p>
+                                                <p><strong>Location:</strong> {{ credit.source_project_location if credit.source_project_location else "N/A" }}</p>
+                                                <p><strong>Validity:</strong> {{ credit.validity_start_date|datetimeformat("%Y-%m-%d") if credit.validity_start_date else "N/A" }} to {{ credit.validity_end_date|datetimeformat("%Y-%m-%d") if credit.validity_end_date else "N/A" }}</p>
+                                                {% if credit.image_filename %}
+                                                    <p><strong>Image:</strong></p>
+                                                    <img src="{{ url_for('uploaded_file', subfolder='credits', filename=credit.image_filename) }}" alt="Credit Image" class="img-fluid mb-2" style="max-height: 200px;">
+                                                {% endif %}
+                                                {% if credit.verification_details_filename %}
+                                                    <p><strong>Verification Document:</strong> <a href="{{ url_for('uploaded_file', subfolder='verifications', filename=credit.verification_details_filename) }}" target="_blank">View Document</a></p>
+                                                {% endif %}
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Reject Modal -->
+                                <div class="modal fade" id="rejectModal{{ credit.id }}" tabindex="-1" aria-labelledby="rejectModalLabel{{ credit.id }}" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <form method="POST" action="{{ url_for('admin.reject_credit', credit_id=credit.id) }}">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="rejectModalLabel{{ credit.id }}">Reject Credit: {{ credit.title }}</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="mb-3">
+                                                        <label for="admin_remarks_{{ credit.id }}" class="form-label">Reason for Rejection (Required)</label>
+                                                        <textarea class="form-control" id="admin_remarks_{{ credit.id }}" name="admin_remarks" rows="3" required></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                    <button type="submit" class="btn btn-danger">Confirm Rejection</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info">No carbon credits are currently pending approval.</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
